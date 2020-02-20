@@ -35,13 +35,13 @@ edge(5,4,2).
 direct(From, To, Cost) :- edge(From, To, Cost). %evaluates to true if direct path From -> To
 
 %endpath function recursively searches for an options from A to B and store the different paths in ENDPATH.
-path(From, To, ENDPATH) :- direct(From, To, Cost), ENDPATH = [edge(From, To, Cost)]. %endcase, destination has been reached, initialize ENDPATH
-path(From, To, Path) :- edge(From, Between, Cost), path(Between, To, ENDPATH), append(ENDPATH, [edge(From, Between, Cost)], Path).
+path1(From, To, ENDPATH) :- direct(From, To, Cost), ENDPATH = [edge(From, To, Cost)]. %endcase, destination has been reached, initialize ENDPATH
+path1(From, To, Path) :- edge(From, Between, Cost), path1(Between, To, ENDPATH), append(ENDPATH, [edge(From, Between, Cost)], Path).
 
 %add(Visited, Between, NewVisited) :- append(Between, Visited, NewVisited).
 
-%unvisited(Between, Visited) :- not(member(Between, Visited)).
+unvisited(Between, Visited) :- not(member(Between, Visited)).
 
-%path(From, To, Visited, ENDPATH) :- direct(From, To, Cost), ENDPATH = [edge(From, To, Cost)], Visited = [From].
-%path(From, To, Visited, Path) :- edge(From, Between, Cost), unvisited(Between, Visited), append([Between], Visited, NewVisited), path(Between, To, NewVisited, ENDPATH), append(ENDPATH, [edge(From, Between, Cost)], Path).
+path(From, To, Visited, ENDPATH) :- direct(From, To, Cost), ENDPATH = [edge(From, To, Cost)], Visited = [From]. %endcase, destination has been reached, initialize ENDPATH and Visited
+path(From, To, Visited, Path) :- edge(From, Between, Cost), unvisited(From, Visited), append([Between], Visited, NewVisited), path(Between, To, NewVisited, ENDPATH), append(ENDPATH, [edge(From, Between, Cost)], Path).
 %not(member(Between, Visited)),
