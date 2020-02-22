@@ -1,26 +1,41 @@
-%% Mudi Al-Fageh 
-%% Rens Vester
+% Rens Vester
+% Mudi Al-Fageh
 
-edge(1, 2, 5).
-edge(2, 1, 3).
-edge(2, 3, 4).
-edge(2, 4, 3).
-edge(2, 5, 5).
-edge(3, 1, 9).
-edge(3, 2, 2).
-edge(5, 1, 3).
-edge(5, 4, 2).
+:- consult('graph.pl').
+
+shortest_path(From, To, Path) :-
+    traverse(From, To, From, Path, 0, _).
+    %ShortestPath is Path,
+    %ShortestPath is (min_member(PathCost, TotalCosts)
+
+%cost([], _).
+%cost(TotalCost, TotalCost).
+%gets the cost from an edge
+cost(edge(_, _, P), Cost) :-
+    Cost = P.
+
+totalcost(Path, StartCost, TotalCost) :-
+    Path = [Head|Tail],
+    cost(Head, NewCost),
+    TotalCost is StartCost+NewCost,
+    totalcost(Path, TotalCost, TotalCost).
 
 
-/* in case there is a direct connection From -> To, then the first Travel rule applies.
-this appends the final value to the path and its a solution. the below travel is for recursively
-finding edges in between that can take you to a direct link with the destination. In case it is found
-the first Travel applies, gives true and the entire path as solution.  */
+traverse(Result, Result, _, [], EndCost, EndCost).
+traverse(From, To, Visited, [edge(From, Between, Cost)|Path], StartCost, TotalCost) :-
+    edge(From, Between, Cost),
+    \+ member(Between, Visited), % not visited before
+    NewCost is StartCost+Cost, %NewCost is startcost + cost van nieuwe
+    traverse(Between, To, [Between|Visited], Path, NewCost, TotalCost).
 
-travel(From, To, P, [edge(From, To, Cost)|P]) :- edge(From, To, Cost).
-travel(From, To, Visited, Path) :- edge(From, Between, Cost),
-    Between \== To, % between cannot be the destination
-    \+ member(edge(From, Between, Cost), Visited), % not visited before
-    travel(Between, To, [edge(From, Between, Cost)|Visited], Path).
+/*
+traverse2(From, From, _, [], P, P).
+traverse2(From, To, Visited, [edge(From, Between, Cost)|EndPath], S, Path) :-
+    edge(From, Between, Cost),
+    notIn(Between, Visited),
+    S1 is S+Cost,
+    traverse2(Between, To, [Between|Visited], EndPath, S1, Path).
+*/
 
-path(From, To, RevPath) :- travel(From, To, [], Path), reverse(Path, RevPath).
+
+%totalCost(Path, Costs) :-
