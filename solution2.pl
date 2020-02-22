@@ -8,34 +8,26 @@ shortest_path(From, To, Path) :-
     %ShortestPath is Path,
     %ShortestPath is (min_member(PathCost, TotalCosts)
 
-%cost([], _).
-%cost(TotalCost, TotalCost).
-%gets the cost from an edge
-cost(edge(_, _, P), Cost) :-
+%to get the desired I/O
+cost(Path, TotalCost) :-
+    totalcost(Path, 0, TotalCost).
+
+%takes the third element of an edges tuple
+edgecost(edge(_, _, P), Cost) :-
     Cost = P.
 
-totalcost(Path, StartCost, TotalCost) :-
-    Path = [Head|Tail],
-    cost(Head, NewCost),
-    TotalCost is StartCost+NewCost,
-    totalcost(Path, TotalCost, TotalCost).
+%calculates total cost of given path
+totalcost([], EndCost, EndCost).
+totalcost([Head|Tail], StartCost, TotalCost) :-
+    edgecost(Head, Cost),
+    NewCost is StartCost+Cost,
+    totalcost(Tail, NewCost, TotalCost).
 
 
+%relation all paths and their cost.
 traverse(Result, Result, _, [], EndCost, EndCost).
 traverse(From, To, Visited, [edge(From, Between, Cost)|Path], StartCost, TotalCost) :-
     edge(From, Between, Cost),
     \+ member(Between, Visited), % not visited before
     NewCost is StartCost+Cost, %NewCost is startcost + cost van nieuwe
     traverse(Between, To, [Between|Visited], Path, NewCost, TotalCost).
-
-/*
-traverse2(From, From, _, [], P, P).
-traverse2(From, To, Visited, [edge(From, Between, Cost)|EndPath], S, Path) :-
-    edge(From, Between, Cost),
-    notIn(Between, Visited),
-    S1 is S+Cost,
-    traverse2(Between, To, [Between|Visited], EndPath, S1, Path).
-*/
-
-
-%totalCost(Path, Costs) :-
