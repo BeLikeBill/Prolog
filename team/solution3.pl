@@ -1,9 +1,6 @@
 % Rens Vester
 % Mudi Al-Fageh
 
-:- op(100, xfx, at).
-:- op(50, xfx, :).
-
 :- consult('route.pl').
 
 %gets the shortest path between two stations
